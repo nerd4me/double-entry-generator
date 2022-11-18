@@ -28,28 +28,29 @@ type IR struct {
 
 // Order is the intermediate representation for the order.
 type Order struct {
-	OrderType       OrderType
-	Peer            string
-	Item            string
-	Category        string
-	MerchantOrderID *string
-	OrderID         *string
-	Money           float64
-	Note            string
-	PayTime         time.Time
-	Type            Type // 方向，一般为 收/支
-	TypeOriginal    string
-	TxTypeOriginal  string // 交易类型
-	Method          string
-	Amount          float64
-	Price           float64
-	Commission      float64 // 手续费/服务费
-	Units           map[Unit]string
-	ExtraAccounts   map[Account]string
-	MinusAccount    string
-	PlusAccount     string
-	Metadata        map[string]string
-	Tags            []string
+	OrderType         OrderType
+	Peer              string
+	Item              string
+	Category          string
+	MerchantOrderID   *string
+	OrderID           *string
+	Money             float64
+	Note              string
+	PayTime           time.Time
+	Type              Type // 方向，一般为 收/支
+	TypeOriginal      string
+	TxTypeOriginal    string // 交易类型
+	Method            string
+	Amount            float64
+	Price             float64
+	Commission        float64 // 手续费/服务费
+	Units             map[Unit]string
+	ExtraAccounts     map[Account]string
+	MinusAccount      string
+	PlusAccount       string
+	Metadata          map[string]string
+	Tags              []string
+	HasAnyMatchedRule bool
 }
 
 // Unit is the key commodity names

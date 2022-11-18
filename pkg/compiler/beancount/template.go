@@ -5,6 +5,16 @@ import (
 	"time"
 )
 
+// 普通账单的模版（消费账）- Modded
+var normalOrderModded = `{{ .PayTime.Format "2006-01-02" }} * "{{ EscapeString .Peer }}" "{{ EscapeString .Item }}"{{ range .Tags }} #{{ . }}{{ end }}{{ if .Note }} ; {{ .Note }}{{ end }}
+	{{ .PlusAccount }} {{ .Money | printf "%.2f" }} {{ .Currency }}
+	{{ .MinusAccount }} -{{ .Money | printf "%.2f" }} {{ .Currency }}
+	{{- if .CommissionAccount }}{{ printf "\n" }}	{{ .CommissionAccount }} {{ .Commission | printf "%.2f" }} {{ .Currency }}{{ end }}
+	{{- if .CommissionAccount }}{{ printf "\n" }}	{{ .MinusAccount }} -{{ .Commission | printf "%.2f" }} {{ .Currency }}{{ end }}
+	{{- if .PnlAccount }}{{ printf "\n" }}	{{ .PnlAccount }}{{ end }}
+
+`
+
 // 普通账单的模版（消费账）
 var normalOrder = `{{ .PayTime.Format "2006-01-02" }} * "{{ EscapeString .Peer }}" "{{ EscapeString .Item }}"{{ range .Tags }} #{{ . }}{{ end }}{{ if .Note }} ; {{ .Note }}{{ end }}
 	{{- range $key, $value := .Metadata }}{{ if $value }}{{ printf "\n" }}	{{ $key }}: "{{ $value }}"{{end}}{{end}}

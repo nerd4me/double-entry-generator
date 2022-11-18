@@ -39,12 +39,11 @@ func (a Alipay) GetAllCandidateAccounts(cfg *config.Config) map[string]bool {
 
 // GetAccounts returns minus and plus account.
 func (a Alipay) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, provider string) (string, string, map[ir.Account]string, []string) {
-
+	var resMinus string
+	var resPlus string
 	if cfg.Alipay == nil || len(cfg.Alipay.Rules) == 0 {
-		return cfg.DefaultMinusAccount, cfg.DefaultPlusAccount, nil, nil
+		return resMinus, resPlus, nil, nil
 	}
-	resMinus := cfg.DefaultMinusAccount
-	resPlus := cfg.DefaultPlusAccount
 	var extraAccounts map[ir.Account]string
 	var tags = make([]string, 0)
 
@@ -119,7 +118,6 @@ func (a Alipay) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 
 		}
 	}
-
 	if strings.HasPrefix(o.Item, "退款-") {
 		return resPlus, resMinus, extraAccounts, tags
 	}

@@ -54,7 +54,7 @@ func (b *BeanCount) initTemplates() error {
 	}
 
 	var err error
-	normalOrderTemplate, err = template.New("normalOrder").Funcs(funcMap).Parse(normalOrder)
+	normalOrderTemplate, err = template.New("normalOrder").Funcs(funcMap).Parse(normalOrderModded)
 	if err != nil {
 		return fmt.Errorf("Failed to init the normalOrder template. %v", err)
 	}
@@ -92,6 +92,7 @@ func (b *BeanCount) Compile() error {
 		b.IR.Orders[index].PlusAccount = plusAccount
 		b.IR.Orders[index].ExtraAccounts = extraAccounts
 		b.IR.Orders[index].Tags = tags
+		b.IR.Orders[index].HasAnyMatchedRule = (minusAccount != "" || plusAccount != "")
 	}
 
 	log.Printf("Writing to %s", b.Output)
@@ -165,6 +166,10 @@ func (b *BeanCount) writeBills(file *os.File) error {
 
 func (b *BeanCount) writeBill(file *os.File, index int) error {
 	o := b.IR.Orders[index]
+
+	if !o.HasAnyMatchedRule {
+		return nil
+	}
 
 	var buf bytes.Buffer
 	var err error

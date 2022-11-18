@@ -1,0 +1,90 @@
+defaultMinusAccount: Assets:FIXME
+defaultPlusAccount: Expenses:FIXME
+defaultCurrency: CNY
+title: 测试
+alipay:
+  rules:
+    - method: 平安银行信用卡(0999)
+      fullMatch: true
+      methodAccount: Liabilities:Credit:平安银行0999
+    - method: 花呗
+      methodAccount: Liabilities:Credit:花呗
+    - method: 招商银行信用卡(7759)
+      fullMatch: true
+      methodAccount: Liabilities:Credit:招商银行
+    - method: 交通银行信用卡(9463)
+      fullMatch: true
+      methodAccount: Liabilities:Credit:交通银行9463
+    - method: 亲情卡
+      methodAccount: Assets:Prepayment:亲情卡
+    - peer: 卿(周卿)
+      item: 亲情卡
+      targetAccount: Assets:Prepayment:亲情卡
+    - peer: 众安保险
+      targetAccount: Expenses:Social:商业保险
+    - peer: 哈药
+      targetAccount: Expenses:Child:医疗健康
+    - peer: 绿源生鲜                
+      targetAccount: Expenses:Food:正餐
+    - peer: 东奥继续教育
+      targetAccount: Expenses:Personal:技术服务
+    - item: 医用外科口罩
+      targetAccount: Expenses:Medical
+    - item: 文具盒
+      targetAccount: Expenses:Child:文具
+    - item: 格子枕,种植土,卫生纸,暖宝宝
+      sep: ','
+      targetAccount: Expenses:Life:日常用品
+    - peer: 抖音小店
+      targetAccount: Expenses:Personal:服饰
+    - item: 儿童电动牙刷
+      targetAccount: Expenses:Child
+    - item: 玉米油
+      targetAccount: Expenses:Food:正餐
+    - item: 天猫超市卡
+      targetAccount: Assets:Prepayment:天猫超市
+
+wechat:
+  rules:
+    # type (additional condition)
+    - method: 零钱
+      fullMatch: true
+      methodAccount: Assets:VA:微信:卿
+    - type: 收入 # 微信红包
+      method: /
+      item: /
+      methodAccount: Assets:VA:微信:卿
+      targetAccount: Income:Others
+    - type: / # 转入零钱通
+      txType: 转入零钱
+      peer: /
+      item: /
+      targetAccount: Assets:VA:微信:卿
+    # - type: / # 零钱提现
+    #   txType: 零钱提现
+    #   targetAccount: Assets:Digital:Wechat:Cash
+    #   commissionAccount: Expenses:Wechat:Commission
+    - type: / # 零钱充值
+      txType: 零钱充值
+      targetAccount: Assets:VA:微信:卿
+    - type: / # 零钱通转出-到工商银行(9876)
+      txType: 零钱通转出-到工商银行(9876)
+      targetAccount: Assets:Bank:CN:ICBC:Savings
+    - type: 支出
+      txType: 赞赏码
+      targetAccount: Expenses:Personal:技术服务
+
+    - peer: 土特产
+      targetAccount: Expenses:Food:零食
+    - peer: 佳缘,盒马集市
+      sep: ","
+      targetAccount: Expenses:Food:正餐
+    - peer: 抖音
+      item: 抖币
+      targetAccount: Expenses:Personal:电子消费品
+    - peer: 超市
+      targetAccount: Expenses:Food:正餐
+    - peer: 凯叔讲故事
+      targetAccount: Expenses:Child:教育
+    - peer: 云充电子
+      targetAccount: Expenses:Life:电费
