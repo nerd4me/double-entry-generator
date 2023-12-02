@@ -23,6 +23,7 @@ type Config struct {
 
 // Rule is the type for match rules.
 type Rule struct {
+	Owner             *string `mapstructure:"owner,omitempty"`
 	Peer              *string `mapstructure:"peer,omitempty"`
 	Item              *string `mapstructure:"item,omitempty"`
 	Type              *string `mapstructure:"type,omitempty"`

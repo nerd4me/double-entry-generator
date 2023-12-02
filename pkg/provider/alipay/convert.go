@@ -20,7 +20,7 @@ func (a *Alipay) convertToIR() *ir.IR {
 			Type:         convertType(o.Type),
 			TypeOriginal: o.TypeOriginal,
 		}
-		irO.Metadata = getMetadata(o)
+		irO.Metadata = getMetadata(o, a.Owner)
 		if o.MerchantId != "" {
 			irO.MerchantOrderID = &o.MerchantId
 		}
@@ -41,8 +41,9 @@ func convertType(t Type) ir.Type {
 }
 
 // getMetadata get the metadata (e.g. status, method, category and so on.)
-//  from order.
-func getMetadata(o Order) map[string]string {
+//
+//	from order.
+func getMetadata(o Order, owner string) map[string]string {
 	// FIXME(TripleZ): hard-coded, bad pattern
 	source := "支付宝"
 	var status, method, category, typeOriginal, orderId, merchantId, paytime string
@@ -74,6 +75,7 @@ func getMetadata(o Order) map[string]string {
 	}
 
 	return map[string]string{
+		"owner":      owner,
 		"source":     source,
 		"payTime":    paytime,
 		"orderId":    orderId,

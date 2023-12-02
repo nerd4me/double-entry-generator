@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
 
 	"github.com/deb-sig/double-entry-generator/pkg/io/reader"
 	"github.com/deb-sig/double-entry-generator/pkg/ir"
+	"github.com/spf13/viper"
 )
 
 // Wechat is the provider for Wechat.
@@ -15,6 +17,7 @@ type Wechat struct {
 	Statistics Statistics `json:"statistics,omitempty"`
 	LineNum    int        `json:"line_num,omitempty"`
 	Orders     []Order    `json:"orders,omitempty"`
+	Owner      string     `json:"owner,omitempty"`
 }
 
 // New creates a new wechat provider.
@@ -44,6 +47,19 @@ func (w *Wechat) Translate(filename string) (*ir.IR, error) {
 	for {
 		line, err := csvReader.Read()
 
+		if w.LineNum == 1 && strings.Contains(line[0], "微信昵称：") {
+			owners := viper.GetStringMapString("wechat.owners")
+			for owner, name := range owners {
+				if strings.Contains(line[0], name) {
+					w.Owner = owner
+					log.Printf("Wechat bill with owner %s", w.Owner)
+				}
+			}
+			if w.Owner == "" {
+				return nil, fmt.Errorf("canot get bill owner with config %v", owners)
+			}
+		}
+
 		if err == io.EOF {
 			break
 		} else if err != nil {
@@ -58,7 +74,7 @@ func (w *Wechat) Translate(filename string) (*ir.IR, error) {
 
 		err = w.translateToOrders(line)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to translate bill: line %d: %v",
+			return nil, fmt.Errorf("failed to translate bill: line %d: %v",
 				w.LineNum, err)
 		}
 	}

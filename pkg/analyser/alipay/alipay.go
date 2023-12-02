@@ -51,6 +51,9 @@ func (a Alipay) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 
 	var err error
 	for _, r := range cfg.Alipay.Rules {
+		if r.Owner != nil && *r.Owner != o.Metadata["owner"] {
+			continue
+		}
 		match := true
 		// get separator
 		sep := ","

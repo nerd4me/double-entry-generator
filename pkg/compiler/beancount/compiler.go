@@ -184,6 +184,13 @@ func (b *BeanCount) writeBill(file io.Writer, index int) error {
 	default:
 		fallthrough
 	case ir.OrderTypeNormal:
+		// remove all Metadata but `owner` and `payTime`
+		for key := range o.Metadata {
+			if key != "owner" && key != "payTime" {
+				delete(o.Metadata, key)
+			}
+		}
+
 		err = normalOrderTemplate.Execute(&buf, &NormalOrderVars{
 			PayTime:           o.PayTime,
 			Peer:              o.Peer,
