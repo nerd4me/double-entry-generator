@@ -25,6 +25,7 @@ import (
 
 	"github.com/deb-sig/double-entry-generator/pkg/io/reader"
 	"github.com/deb-sig/double-entry-generator/pkg/ir"
+	"github.com/spf13/viper"
 )
 
 // Alipay is the provider for alipay.
@@ -32,6 +33,7 @@ type Alipay struct {
 	Statistics Statistics `json:"statistics,omitempty"`
 	LineNum    int        `json:"line_num,omitempty"`
 	Orders     []Order    `json:"orders,omitempty"`
+	Owner      string     `json:"owner,omitempty"`
 
 	// TitleParsed is a workaround to ignore the title row.
 	TitleParsed bool `json:"title_parsed,omitempty"`
@@ -75,6 +77,19 @@ func (a *Alipay) Translate(filename string) (*ir.IR, error) {
 			return nil, fmt.Errorf("可能为支付宝老版本 csv 账单，请使用 1.7.0 及之前的版本尝试转换")
 		}
 
+		if a.LineNum == 2 && strings.Contains(line[0], "姓名：") {
+			owners := viper.GetStringMapString("alipay.owners")
+			for owner, name := range owners {
+				if strings.Contains(line[0], name) {
+					a.Owner = owner
+					log.Printf("Alipay bill with owner %s", a.Owner)
+				}
+			}
+			if a.Owner == "" {
+				return nil, fmt.Errorf("canot get bill owner with config %v", owners)
+			}
+		}
+
 		a.LineNum++
 
 		if a.LineNum <= 23 {
@@ -84,7 +99,7 @@ func (a *Alipay) Translate(filename string) (*ir.IR, error) {
 
 		err = a.translateToOrders(line)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to translate bill: line %d: %v",
+			return nil, fmt.Errorf("failed to translate bill: line %d: %v",
 				a.LineNum, err)
 		}
 	}

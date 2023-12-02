@@ -24,7 +24,7 @@ type Statistics struct {
 
 // Order is the single order.
 type Order struct {
-	Type         Type      `json:"type,omitempty"` // 收/支
+	Type         Type      `json:"type,omitempty"`  // 收/支
 	TypeOriginal string    `json:"typeOriginal,omitempty"`
 	Peer         string    `json:"peer,omitempty"`        // 交易对方
 	PeerAccount  string    `json:"peerAccount,omitempty"` // 对方账号

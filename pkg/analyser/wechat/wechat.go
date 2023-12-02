@@ -63,6 +63,9 @@ func (w Wechat) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 
 	var err error
 	for _, r := range cfg.Wechat.Rules {
+		if r.Owner != nil && *r.Owner != o.Metadata["owner"] {
+			continue
+		}
 		match := true
 		// get separator
 		sep := ","
