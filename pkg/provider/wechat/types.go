@@ -69,4 +69,5 @@ const (
 	TxTypeSponsorCode          TxType = "赞赏码"
 	TxTypeOther                TxType = "其他"
 	TxTypeUnknown              TxType = "Unknown"
+	TxTypePocketMoneyTopUp	   TxType = "零花钱充值"
 )
