@@ -29,7 +29,7 @@ func New() *Wechat {
 	}
 }
 
-// Translate translates the alipay bill records to IR.
+// Translate translates the wechat bill records to IR.
 func (w *Wechat) Translate(filename string) (*ir.IR, error) {
 	log.SetPrefix("[Provider-Wechat] ")
 
@@ -38,7 +38,15 @@ func (w *Wechat) Translate(filename string) (*ir.IR, error) {
 		return nil, fmt.Errorf("can't get bill reader, err: %v", err)
 	}
 
-	csvReader := csv.NewReader(billReader)
+	// Read the entire file content and replace tabs
+	content, err := io.ReadAll(billReader)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file content: %v", err)
+	}
+	cleanedContent := strings.ReplaceAll(string(content), "\t", "")
+
+	// Create a new CSV reader with the cleaned content
+	csvReader := csv.NewReader(strings.NewReader(cleanedContent))
 	csvReader.LazyQuotes = true
 	// If FieldsPerRecord is negative, no check is made and records
 	// may have a variable number of fields.
