@@ -184,9 +184,9 @@ func (b *BeanCount) writeBill(file io.Writer, index int) error {
 	default:
 		fallthrough
 	case ir.OrderTypeNormal:
-		// remove all Metadata but `owner` and `payTime`
+		// remove all Metadata but `owner` and `payTime` and `originalMethod`
 		for key := range o.Metadata {
-			if key != "owner" && key != "payTime" {
+			if key != "owner" && key != "payTime" && key != "originalMethod" {
 				delete(o.Metadata, key)
 			}
 		}

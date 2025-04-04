@@ -60,6 +60,7 @@ func (w Wechat) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 
 	resMinus := cfg.DefaultMinusAccount
 	resPlus := cfg.DefaultPlusAccount
+	methodMatched := false
 
 	var err error
 	for _, r := range cfg.Wechat.Rules {
@@ -89,6 +90,10 @@ func (w Wechat) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 		}
 		if r.Method != nil {
 			match = matchFunc(*r.Method, o.Method, sep, match)
+			if match {
+				// log.Printf("Method matched: %s -> %s", o.Method, *r.MethodAccount)
+				methodMatched = true
+			}
 		}
 		if r.Item != nil {
 			match = matchFunc(*r.Item, o.Item, sep, match)
@@ -134,11 +139,11 @@ func (w Wechat) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 			if r.Tag != nil {
 				tags = strings.Split(*r.Tag, sep)
 			}
-
 		}
-
 	}
-
+	if !methodMatched && o.Method != "" {
+		o.Metadata["originalMethod"] = o.Method
+	}
 	return ignore, resMinus, resPlus, map[ir.Account]string{
 		ir.CommissionAccount: resCommission,
 	}, tags

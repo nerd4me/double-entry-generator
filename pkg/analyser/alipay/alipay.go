@@ -48,6 +48,7 @@ func (a Alipay) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 	resPlus := cfg.DefaultPlusAccount
 	var extraAccounts map[ir.Account]string
 	var tags = make([]string, 0)
+	methodMatched := false
 
 	var err error
 	for _, r := range cfg.Alipay.Rules {
@@ -77,6 +78,10 @@ func (a Alipay) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 		}
 		if r.Method != nil {
 			match = matchFunc(*r.Method, o.Method, sep, match)
+			if match {
+				// log.Printf("Method matched: %s -> %s", o.Method, *r.MethodAccount)
+				methodMatched = true
+			}
 		}
 		if r.Category != nil {
 			match = matchFunc(*r.Category, o.Category, sep, match)
@@ -127,6 +132,9 @@ func (a Alipay) GetAccountsAndTags(o *ir.Order, cfg *config.Config, target, prov
 			}
 
 		}
+	}
+	if !methodMatched && o.Method != "" {
+		o.Metadata["originalMethod"] = o.Method
 	}
 
 	if strings.HasPrefix(o.Item, "退款-") && ir.TypeRecv != o.Type {
